@@ -1,3 +1,13 @@
+/*
+
+Goal: 
+On PayPal IPN 
+Call helm binary.
+Pass appropriate args.
+
+*/
+
+
 let helmBinary = '/usr/local/bin/helm';
 
 const util = require('util');
@@ -74,14 +84,16 @@ app.post('/ipn', (req, res) => {
 
                     //TODO: set helm char to also render crd to allow for `kubectl get subscriptions`
                     let args = '';
-                    args+= '--namespace=' + stringSafe(ipnVars.payer_email)
-                    args+= ' --set email=' + ipnVars.payer_email
-                    args+= ' --set memoryBurst=' + dollarRAMMap[ipnVars.auth_amount]
-                    args+= ' --set storage=' + dollarStorageMap[ipnVars.auth_amount]
-                    args+= ` --set ${option_name1}=${option_selection1}`
-                    args+= ` --set ${option_name2}=${option_selection2}`
-                    args+= ` --name=${txn_id}`
+                    args+= `--namespace=${stringSafe(ipnVars.payer_email)} `
+                    args+= `--set email=${ipnVars.payer_email} `
+                    args+= `--set memoryBurst=${dollarRAMMap[ipnVars.auth_amount]} `
+                    args+= `--set storage=${dollarStorageMap[ipnVars.auth_amount]} `
+                    args+= `--set ${option_name1}=${option_selection1} `
+                    args+= `--set ${option_name2}=${option_selection2} `
+                    args+= `--name=${txn_id} `
                     //TODO Regexp verify args at the least users cant just go "I want version rm -rf / --no-preserve-root"
+
+                    console.log("Rendered:" + args)
 
                     break;
                 case 'subscr_cancel': //Subscription canceled
@@ -105,7 +117,7 @@ app.post('/subscription', (req, res) => {
     if(req.body.event_type == "BILLING.SUBSCRIPTION.ACTIVATED")
     {
         var setString = "";
-        setString += "--set minecraft.version==" + 
+        setString += "--set minecraft.version=="
     }
 
     res.send(200)
